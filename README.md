@@ -1,5 +1,3 @@
-Here's the formatted README.md:
-
 ```markdown
 # KiloNeRF: Speeding up Neural Radiance Fields with Thousands of Tiny MLPs
 
