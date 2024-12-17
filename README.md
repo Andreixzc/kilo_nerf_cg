@@ -1,4 +1,3 @@
-```markdown
 # KiloNeRF: Speeding up Neural Radiance Fields with Thousands of Tiny MLPs
 
 Implementation in 100 lines of code of the paper [KiloNeRF: Speeding up Neural Radiance Fields with Thousands of Tiny MLPs](https://arxiv.org/abs/2103.13744).
@@ -55,4 +54,3 @@ python kilo_nerf_test.py
 
 **Note:** This is not my original implementation! I just fixed some errors and added the model saving feature.  
 Source: [MaximeVandegar/Papers-in-100-Lines-of-Code](https://github.com/MaximeVandegar/Papers-in-100-Lines-of-Code/tree/main/KiloNeRF_Speeding_up_Neural_Radiance_Fields_with_Thousands_of_Tiny_MLPs)
-```
