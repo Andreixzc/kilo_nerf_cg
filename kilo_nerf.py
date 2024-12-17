@@ -135,16 +135,45 @@ def train(nerf_model, optimizer, scheduler, data_loader, device='cpu', hn=0, hf=
     return training_loss
 
 
+# if __name__ == '__main__':
+#     device = 'cuda'
+#     training_dataset = torch.from_numpy(np.load('training_data.pkl', allow_pickle=True))
+#     testing_dataset = torch.from_numpy(np.load('testing_data.pkl', allow_pickle=True))
+#     model = KiloNerf(16).to(device)
+#     model_optimizer = torch.optim.Adam(model.parameters(), lr=5e-4)
+#     scheduler = torch.optim.lr_scheduler.MultiStepLR(model_optimizer, milestones=[2, 4, 8], gamma=0.5)
+
+#     data_loader = DataLoader(training_dataset, batch_size=1024, shuffle=True)
+#     # train(model, model_optimizer, scheduler, data_loader, nb_epochs=16, device=device, hn=2, hf=6, nb_bins=192, H=400,W=400)
+#     train(model, model_optimizer, scheduler, data_loader, nb_epochs=16, device=device, hn=2, hf=6, nb_bins=192)
+#     for idx in range(200):
+#         test(2, 6, testing_dataset, img_index=idx, nb_bins=192, H=400, W=400)
+
+
+
+
 if __name__ == '__main__':
     device = 'cuda'
+    # Load and reduce training data size (use only 25% of data)
     training_dataset = torch.from_numpy(np.load('training_data.pkl', allow_pickle=True))
+    training_dataset = training_dataset[:len(training_dataset)//4]  # Use 25% of training data
+    
+    # Load and reduce testing data (test fewer images)
     testing_dataset = torch.from_numpy(np.load('testing_data.pkl', allow_pickle=True))
+    
     model = KiloNerf(16).to(device)
     model_optimizer = torch.optim.Adam(model.parameters(), lr=5e-4)
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(model_optimizer, milestones=[2, 4, 8], gamma=0.5)
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(model_optimizer, milestones=[1, 2], gamma=0.5)  # Faster learning rate decay
 
-    data_loader = DataLoader(training_dataset, batch_size=1024, shuffle=True)
-    # train(model, model_optimizer, scheduler, data_loader, nb_epochs=16, device=device, hn=2, hf=6, nb_bins=192, H=400,W=400)
-    train(model, model_optimizer, scheduler, data_loader, nb_epochs=16, device=device, hn=2, hf=6, nb_bins=192)
-    for idx in range(200):
-        test(2, 6, testing_dataset, img_index=idx, nb_bins=192, H=400, W=400)
+    # Increase batch size for faster processing if your GPU has enough memory
+    data_loader = DataLoader(training_dataset, batch_size=2048, shuffle=True)
+    
+    # Reduced parameters:
+    # - nb_epochs from 16 to 4
+    # - nb_bins from 192 to 96 (less detail but faster)
+    train(model, model_optimizer, scheduler, data_loader, 
+          nb_epochs=4, device=device, hn=2, hf=6, nb_bins=96)
+    
+    # Test fewer images (20 instead of 200)
+    for idx in range(20):
+        test(2, 6, testing_dataset, img_index=idx, nb_bins=96, H=400, W=400)
